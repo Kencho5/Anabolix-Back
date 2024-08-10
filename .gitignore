@@ -1,0 +1,21 @@
+# Build output
+/target/
+
+# Dependency directory
+/Cargo.lock
+
+# Rust build artifacts
+*.rs.bk
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swo
+*.swp
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Optional: Local environment settings
+.env
