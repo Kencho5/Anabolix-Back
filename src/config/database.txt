@@ -1,0 +1,9 @@
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,
+    username VARCHAR NOT NULL CHECK (LENGTH(username) > 0),
+    password VARCHAR NOT NULL CHECK (LENGTH(password) > 0),
+    time_registered TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX username_index
+ON users(username);

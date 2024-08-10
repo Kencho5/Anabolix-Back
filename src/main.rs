@@ -1,3 +1,4 @@
+mod config;
 mod imports;
 mod register_routes;
 mod routes;
