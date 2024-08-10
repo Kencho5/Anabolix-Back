@@ -2,12 +2,15 @@ mod imports;
 mod register_routes;
 mod routes;
 mod utils;
+use crate::imports::*;
 use http_types::headers::HeaderValue;
 use tide::security::{CorsMiddleware, Origin};
 
-#[tokio::main]
+#[async_std::main]
 async fn main() -> tide::Result<()> {
     // tide::log::start();
+    let config = config::config_manager::load_config().expect("Config Error.");
+
     let mut app = tide::new();
 
     let cors = CorsMiddleware::new()
@@ -15,6 +18,16 @@ async fn main() -> tide::Result<()> {
         .allow_origin(Origin::from("*"))
         .allow_credentials(false);
     app.with(cors);
+
+    let connection_url = format!(
+        "postgres://{}:{}@{}:{}/{}",
+        config.database.username,
+        config.database.password,
+        config.database.host,
+        config.database.port,
+        config.database.db_name
+    );
+    app.with(SQLxMiddleware::<Postgres>::new(&connection_url).await?);
 
     register_routes::register_routes(&mut app);
 
