@@ -1,3 +1,4 @@
+pub use pwhash::{bcrypt, unix};
 pub use serde::{Deserialize, Serialize};
 pub use serde_json::json;
 pub use sqlx::postgres::Postgres;
