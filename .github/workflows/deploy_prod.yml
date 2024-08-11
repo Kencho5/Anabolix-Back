@@ -1,0 +1,84 @@
+name: Anabolix Prod Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Build:
+    runs-on: ubuntu-20.04
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        
+    - name: Cache Cargo Registry
+      uses: actions/cache@v3
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-registry-
+        
+    - name: Cache Cargo Index
+      uses: actions/cache@v3
+      with:
+        path: ~/.cargo/index
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-index-
+
+    - name: Cache Cargo Build
+      uses: actions/cache@v3
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-build-
+        
+    - name: Build Rust Program
+      run: cargo build --release
+      
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: anabolix-backend-binary
+        path: target/release/anabolix-backend
+
+  Deploy:
+    needs: Build
+    runs-on: ubuntu-20.04
+    
+    steps:
+    - name: Download Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: anabolix-backend-binary
+        
+    - name: Copy Executable to VPS
+      uses: appleboy/scp-action@master
+      with:
+        source: anabolix-backend
+        target: "/root/Anabolix-Backend/target/release"
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        
+    - name: SSH into VPS and Restart Service
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /root/Anabolix-Backend
+          git pull
+          chmod +x target/release/anabolix-backend
+          sudo systemctl restart anabolix-backend
+
