@@ -20,4 +20,4 @@ Thumbs.db
 # Optional: Local environment settings
 .env
 
-config.json
+src/config/config.json
