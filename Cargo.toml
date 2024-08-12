@@ -13,4 +13,8 @@ http-types = "2.12.0"
 tide-sqlx = "0.6.1"
 sqlx = { version = "0.5.13", features = ["runtime-async-std-rustls", "postgres"] }
 pwhash = "1"
+jwt = "0.16.0"
+time = "0.2.0"
+hmac = "=0.12.1"
+sha2 = "=0.10.8"
 

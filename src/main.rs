@@ -15,9 +15,10 @@ async fn main() -> tide::Result<()> {
     let mut app = tide::new();
 
     let cors = CorsMiddleware::new()
-        .allow_methods("GET, POST".parse::<HeaderValue>().unwrap())
-        .allow_origin(Origin::from("*"))
-        .allow_credentials(false);
+        .allow_credentials(true)
+        .allow_origin(Origin::from("http://localhost:4321"))
+        .allow_methods("GET, POST".parse::<HeaderValue>()?)
+        .allow_headers("Content-Type, Authorization".parse::<HeaderValue>()?);
     app.with(cors);
 
     let connection_url = format!(
