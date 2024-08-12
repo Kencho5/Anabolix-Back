@@ -23,7 +23,7 @@ pub async fn login_handler(mut req: Request<()>) -> tide::Result {
                     response.insert_cookie(
                         Cookie::build("_jwt", token)
                             .max_age(Duration::days(14))
-                            .same_site(tide::http::cookies::SameSite::Lax)
+                            .same_site(tide::http::cookies::SameSite::None)
                             .secure(true)
                             .path("/")
                             .finish(),
