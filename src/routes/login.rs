@@ -25,6 +25,7 @@ pub async fn login_handler(mut req: Request<()>) -> tide::Result {
                             .max_age(Duration::days(14))
                             .same_site(tide::http::cookies::SameSite::None)
                             .secure(true)
+                            .http_only(true)
                             .path("/")
                             .finish(),
                     );
