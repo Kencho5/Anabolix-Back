@@ -6,7 +6,7 @@ use std::io::Read;
 pub struct Config {
     pub database: DatabaseConfig,
     pub tide_secret: String,
-    pub enviorement: String,
+    pub origin: String,
 }
 
 #[derive(Deserialize, Clone)]

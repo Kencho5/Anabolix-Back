@@ -9,18 +9,14 @@ use tide::security::{CorsMiddleware, Origin};
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {
-    tide::log::start();
+    // tide::log::start();
     let config = config::config_manager::load_config().expect("Config Error.");
-    let mut allowed_origin: &str = "http://localhost:4321";
-    if config.enviorement != "local" {
-        allowed_origin = "https://kencho.site"
-    }
 
     let mut app = tide::new();
 
     let cors = CorsMiddleware::new()
         .allow_credentials(true)
-        .allow_origin(Origin::from(allowed_origin))
+        .allow_origin(Origin::from(config.origin))
         .allow_methods("GET, POST".parse::<HeaderValue>()?)
         .allow_headers("Content-Type, Authorization".parse::<HeaderValue>()?);
     app.with(cors);
