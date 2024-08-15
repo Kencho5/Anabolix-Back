@@ -20,14 +20,17 @@ pub async fn login_handler(mut req: Request<()>) -> tide::Result {
         Ok(user_db) => {
             if unix::verify(user.password, &user_db.password) {
                 if let Some(token) = generate_token(&config, &user_db).await? {
-                    response.insert_cookie(
-                        Cookie::build("_jwt", token)
-                            .max_age(Duration::days(14))
-                            .same_site(tide::http::cookies::SameSite::None)
-                            .secure(true)
-                            .path("/")
-                            .finish(),
-                    );
+                    // response.insert_cookie(
+                    //     Cookie::build("_jwt", token)
+                    //         .max_age(Duration::days(14))
+                    //         .same_site(tide::http::cookies::SameSite::None)
+                    //         .secure(true)
+                    //         .path("/")
+                    //         .finish(),
+                    // );
+                    response.set_body(json!({
+                        "token": token
+                    }));
 
                     return Ok(response);
                 }
