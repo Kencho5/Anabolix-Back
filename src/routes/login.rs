@@ -13,7 +13,7 @@ pub async fn login_handler(mut req: Request<()>) -> tide::Result {
     let mut pg_conn = req.sqlx_conn::<Postgres>().await;
     let config = config_manager::load_config().expect("Config Error.");
 
-    // thread::sleep(time::Duration::from_millis(1600));
+    thread::sleep(time::Duration::from_millis(600));
 
     let user_result = find_user(&mut pg_conn, &user.username).await;
     match user_result {
@@ -64,7 +64,7 @@ async fn generate_token(
     let key: Hmac<Sha256> = Hmac::new_from_slice(config.tide_secret.as_bytes())?;
 
     let mut claims = BTreeMap::new();
-    claims.insert("id", &user.id);
+    claims.insert("userId", &user.id);
     claims.insert("username", &user.username);
 
     let token = claims.sign_with_key(&key)?;
