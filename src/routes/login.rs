@@ -4,7 +4,6 @@ use hmac::{Hmac, Mac};
 use jwt::SignWithKey;
 use sha2::Sha256;
 use std::collections::BTreeMap;
-use tide::http::Cookie;
 
 pub async fn login_handler(mut req: Request<()>) -> tide::Result {
     let mut response = Response::builder(200).build();
@@ -12,22 +11,11 @@ pub async fn login_handler(mut req: Request<()>) -> tide::Result {
     let mut pg_conn = req.sqlx_conn::<Postgres>().await;
     let config = config_manager::load_config().expect("Config Error.");
 
-    let origin = req.header("Origin");
-    println!("{:?}", origin);
-
     let user_result = find_user(&mut pg_conn, &user.username).await;
     match user_result {
         Ok(user_db) => {
             if unix::verify(user.password, &user_db.password) {
                 if let Some(token) = generate_token(&config, &user_db).await? {
-                    // response.insert_cookie(
-                    //     Cookie::build("_jwt", token)
-                    //         .max_age(Duration::days(14))
-                    //         .same_site(tide::http::cookies::SameSite::None)
-                    //         .secure(true)
-                    //         .path("/")
-                    //         .finish(),
-                    // );
                     response.set_body(json!({
                         "token": token
                     }));

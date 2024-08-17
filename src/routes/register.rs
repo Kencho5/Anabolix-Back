@@ -2,15 +2,12 @@ use crate::{
     imports::*,
     utils::{auth_struct, generate_id::get_id},
 };
-use std::{thread, time};
 
 pub async fn register_handler(mut req: Request<()>) -> tide::Result {
     let mut response = Response::builder(200).build();
     let user: auth_struct::RegisterData = req.body_json().await?;
     let user_id = get_id();
     let mut pg_conn = req.sqlx_conn::<Postgres>().await;
-
-    thread::sleep(time::Duration::from_secs(2));
 
     if !register_user(&mut pg_conn, user_id, &user).await {
         response.set_status(500);
