@@ -9,7 +9,7 @@ use tide::security::{CorsMiddleware, Origin};
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {
-    // tide::log::start();
+    tide::log::start();
     let config = config::config_manager::load_config().expect("Config Error.");
 
     let mut app = tide::new();
