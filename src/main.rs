@@ -16,7 +16,7 @@ async fn main() -> tide::Result<()> {
 
     let cors = CorsMiddleware::new()
         .allow_credentials(true)
-        .allow_origin(Origin::from("*"))
+        .allow_origin(Origin::from(config.origin))
         .allow_methods("GET, POST".parse::<HeaderValue>()?)
         .allow_headers("Content-Type, Authorization".parse::<HeaderValue>()?);
     app.with(cors);
