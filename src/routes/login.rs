@@ -11,6 +11,7 @@ pub async fn login_handler(mut req: Request<()>) -> tide::Result {
     let user: auth_struct::LoginData = req.body_json().await?;
     let mut pg_conn = req.sqlx_conn::<Postgres>().await;
     let config = config_manager::load_config().expect("Config Error.");
+    println!("{}", user.username);
 
     let user_result = find_user(&mut pg_conn, &user.username).await;
     match user_result {
