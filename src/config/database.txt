@@ -7,3 +7,12 @@ CREATE TABLE users (
 
 CREATE INDEX username_index
 ON users(username);
+
+CREATE TABLE posts (
+    id TEXT PRIMARY KEY,
+    product TEXT NOT NULL,
+    price SMALLINT,
+    description TEXT NOT NULL,
+    views INT2 DEFAULT 0,
+    time_posted TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

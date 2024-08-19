@@ -10,4 +10,8 @@ pub fn register_routes(app: &mut Server<()>) {
     app.at("/api/register")
         .with(GovernorMiddleware::per_hour(600).unwrap())
         .post(register::register_handler);
+
+    app.at("/api/posts")
+        .with(GovernorMiddleware::per_hour(600).unwrap())
+        .post(posts::posts_handler);
 }
