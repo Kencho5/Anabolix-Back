@@ -1,5 +1,4 @@
 use crate::{config::config_manager, imports::*, utils::auth_struct};
-use ::time::Duration;
 use hmac::{Hmac, Mac};
 use jwt::SignWithKey;
 use sha2::Sha256;
@@ -17,7 +16,7 @@ pub async fn login_handler(mut req: Request<()>) -> tide::Result {
             if unix::verify(user.password, &user_db.password) {
                 if let Some(token) = generate_token(&config, &user_db).await? {
                     response.set_body(json!({
-                        "token": token
+                        "token": token,
                     }));
 
                     return Ok(response);
