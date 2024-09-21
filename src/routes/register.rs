@@ -3,7 +3,7 @@ use crate::{
     utils::{auth_struct, generate_id::get_id},
 };
 
-pub async fn register_handler(mut req: Request<()>) -> tide::Result {
+pub async fn register_handler(mut req: Request<AppState>) -> tide::Result {
     let mut response = Response::builder(200).build();
     let user: auth_struct::RegisterData = req.body_json().await?;
     let user_id = get_id();

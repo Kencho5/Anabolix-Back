@@ -2,9 +2,8 @@ use crate::{config::config_manager, imports::*, utils::auth_struct};
 use hmac::{Hmac, Mac};
 use jwt::SignWithKey;
 use sha2::Sha256;
-use std::collections::BTreeMap;
 
-pub async fn login_handler(mut req: Request<()>) -> tide::Result {
+pub async fn login_handler(mut req: Request<AppState>) -> tide::Result {
     let mut response = Response::builder(200).build();
     let user: auth_struct::LoginData = req.body_json().await?;
     let mut pg_conn = req.sqlx_conn::<Postgres>().await;
@@ -50,9 +49,18 @@ async fn generate_token(
 ) -> tide::Result<Option<String>> {
     let key: Hmac<Sha256> = Hmac::new_from_slice(config.tide_secret.as_bytes())?;
 
-    let mut claims = BTreeMap::new();
-    claims.insert("userId", &user.id);
-    claims.insert("username", &user.username);
+    let current_time = std::time::SystemTime::now();
+    let expiration_time = current_time
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_secs() as usize
+        + 7 * 24 * 3600;
+
+    let claims = json!({
+        "userId": user.id.to_string(),
+        "username": user.username,
+        "exp": expiration_time.to_string()
+    });
 
     let token = claims.sign_with_key(&key)?;
     Ok(Some(token))

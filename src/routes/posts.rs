@@ -1,6 +1,6 @@
 use crate::{imports::*, utils::post_struct};
 
-pub async fn posts_handler(req: Request<()>) -> tide::Result {
+pub async fn posts_handler(req: Request<AppState>) -> tide::Result {
     let posts = get_posts(&req).await?;
     let json = serde_json::to_string(&posts)?;
 
@@ -12,7 +12,7 @@ pub async fn posts_handler(req: Request<()>) -> tide::Result {
     Ok(response)
 }
 
-async fn get_posts(req: &Request<()>) -> tide::Result<Vec<post_struct::PostStruct>> {
+async fn get_posts(req: &Request<AppState>) -> tide::Result<Vec<post_struct::PostStruct>> {
     let query = "SELECT * FROM posts ORDER BY time_posted DESC";
 
     let mut pg_conn = req.sqlx_conn::<Postgres>().await;
